@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Recognition App</title>
+    <style>
+        /* Basic reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #7B4B2B; /* Brown shade for background */
+            font-family: Arial, sans-serif;
+            color: #F0F0F0; /* Light gray text color for contrast */
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.7); /* Darker semi-transparent background */
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: #D2B48C; /* Lighter brown for the title */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Subtle shadow for text enhancement */
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 1rem;
+            min-block-size: calc(100vh - 8rem); /* Adjust based on header and footer height */
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.95); /* Almost white with slight transparency */
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Slightly darker shadow */
+            max-inline-size: 500px;
+            inline-size: 100%;
+            margin-block-end: 2rem;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .file-label {
+            display: inline-block;
+            background: #D2B48C; /* Lighter brown for the file label */
+            color: #000;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-block-end: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .file-label:hover {
+            background-color: #C19A6B; /* Darker brown on hover */
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        button {
+            background: #D2B48C; /* Lighter brown for button */
+            color: #000;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #C19A6B; /* Darker brown on hover */
+        }
+
+        footer {
+            background: rgba(0, 0, 0, 0.7); /* Darker semi-transparent background for footer */
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+            position: relative;
+            inline-size: 100%;
+            inset-block-end: 0;
+        }
+
+        .about-us-container {
+            margin: 2rem 0;
+            text-align: center;
+            color: #F0F0F0;
+        }
+
+        .about-us-container h2 {
+            font-size: 2rem;
+            margin-block-end: 1rem;
+            color: #D2B48C; /* Lighter brown for About Us title */
+        }
+
+        .about-us-container p {
+            font-size: 1.2rem;
+            line-height: 1.5;
+            padding: 0 2rem;
+        }
+
+        /* Result Container */
+        .result-container {
+            display: none; /* Hidden by default */
+            text-align: center;
+            margin: 2rem 0;
+            color: #F0F0F0;
+        }
+
+        .result-container img {
+            border-radius: 12px;
+            max-inline-size: 300px; /* Limit size of result image */
+            margin: 1rem 0;
+        }
+
+        .result-container button {
+            margin-block-start: 1rem;
+        }
+
+        /* Horizontal Image Layout */
+        .horizontal-images {
+            display: flex;
+            justify-content: center; /* Center the images */
+            gap: 0.75rem; /* Space between images */
+            margin-block-end: 0.75rem;
+            flex-wrap: wrap; /* Wrap images to next line on smaller screens */
+        }
+
+        .horizontal-images img {
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            inline-size: 100%;
+            max-inline-size: 300px; /* Default max width of each image */
+            transition: transform 0.3s ease;
+        }
+
+        /* Increase size for the last image */
+        .large-image {
+            max-inline-size: 400px; /* Increased size for the last image */
+        }
+
+        /* Hover effect for the images */
+        .horizontal-images img:hover {
+            transform: scale(1.05); /* Slight zoom on hover */
+        }
+
+        /* Image preview style */
+        .image-preview {
+            max-inline-size: 300px;
+            margin-block-start: 1rem;
+            border: 2px dashed #D2B48C; /* Dashed lighter brown border for the preview */
+            border-radius: 8px;
+            display: none; /* Hidden by default */
+        }
+
+        @media (max-inline-size: 768px) {
+            .horizontal-images {
+                flex-direction: column;
+                align-items: center; /* Center images on smaller screens */
+            }
+        }
+        .contact-us-container {
+            margin: 2rem 0;
+            text-align: center;
+            color: #F0F0F0; /* Light gray text color for contrast */
+        }
+
+        .contact-us-container h2 {
+            font-size: 2.5rem; /* Increased font size */
+            margin-block-end: 1rem;
+            color: #FFD700; /* Gold color for the title */
+            font-family: 'Georgia', serif; /* Change font to Georgia */
+            cursor: pointer; /* Change cursor to pointer */
+            transition: color 0.3s; /* Smooth transition for color change */
+        }
+
+        .contact-us-container h2:hover {
+            color: #FF6347; /* Change color on hover (tomato color) */
+        }
+
+        .contact-us-container p {
+            font-size: 1.2rem; /* Slightly larger font size */
+            line-height: 1.8; /* Increased line height for better readability */
+            padding: 0 2rem; /* Padding for better spacing */
+            font-family: 'Arial', sans-serif; /* Font for the paragraph */
+            color: #F5F5DC; /* Beige color for paragraph text */
+        }
+        .upload-container {
+            inline-size: 300px; /* Adjust the width to make the box smaller */
+            padding: 20px; /* Add some padding for better spacing */
+            border: 1px solid #ccc; /* Optional: Add a border */
+            border-radius: 8px; /* Optional: Round the corners */
+            background-color: #f9f9f9; /* Optional: Background color */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+            margin: auto; /* Center the container */
+        }
+
+        .file-label {
+            display: block; /* Ensure label takes full width */
+            margin-block-end: 10px; /* Space between label and file input */
+        }
+
+        input[type="file"] {
+            display: block; /* Ensure file input takes full width */
+            margin-block-end: 10px; /* Space between file input and button */
+        }
+
+        button {
+            inline-size: 100%; /* Make button full width */
+            padding: 10px; /* Add some padding for better clickability */
+            background-color: #4CAF50; /* Green background */
+            color: white; /* White text */
+            border: none; /* Remove border */
+            border-radius: 4px; /* Optional: Round the corners */
+            cursor: pointer; /* Change cursor on hover */
+        }
+
+        button:hover {
+            background-color: #45a049; /* Darker green on hover */
+        }
+
+        .image-preview {
+            display: block; /* Ensure the preview is block-level */
+            margin-block-start: 10px; /* Space between button and image preview */
+            max-inline-size: 100%; /* Make the preview responsive */
+            block-size: auto; /* Maintain aspect ratio */
+        }
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Food Recognition App</h1>
+    </header>
+
+    <main>
+        <div class="about-us-container">
+            <h2>About Us</h2>
+            <p>
+                Welcome to the Food Recognition App! Our application allows you to easily identify different food items
+                by simply uploading an image. Whether you're looking to analyze nutritional values or discover new dishes,
+                our app provides a seamless way to recognize food with accuracy.
+            </p>
+        </div>
+        <div class="contact-us-container">
+            <h2 id="contactUsHeader">Contact Us</h2>
+            <p id="contactEmail">Email: <a href="mailto:info@foodrecognitionapp.com">info@foodrecognitionapp.com</a></p>
+            <p id="contactPhone">Phone: +254-706-305-550</p> <!-- You can replace with an actual phone number -->
+        </div>
+
+        <!-- Horizontal Image Layout -->
+        <div class="horizontal-images">
+            <img src="background.jpg" alt="Grilled fish">
+            <img src="phot b.jpg" alt="Beef stew">
+            <img src="photo a.jpg" alt="Sausage pasta" class="large-image"> <!-- Class added for larger size -->
+        </div>
+
+        <!-- Upload Container -->
+        <div class="upload-container form-container">
+            <form id="uploadForm" enctype="multipart/form-data" action="/submit" method="post">
+                <label class="file-label" for="foodImage">Choose File</label>
+                <input type="file" id="foodImage" name="foodImage" accept="image/*" required>
+                <button type="submit">Upload and Analyze</button>
+                <img id="imagePreview" class="image-preview" alt="Image Preview">
+            </form>
+        </div>
+
+        <!-- Result Container -->
+        <div class="result-container">
+            <h2>Recognition Result</h2>
+            <img id="resultImage" src="" alt="Result Image">
+            <p id="recognizedFood">Recognized Food Item: </p>
+            <p id="nutritionalInfo">Nutritional Information: </p>
+            <button id="backButton">Go Back</button>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2024 Food Recognition App</p>
+    </footer>
+
+    <script>
+        const uploadForm = document.getElementById('uploadForm');
+        const resultContainer = document.querySelector('.result-container');
+        const uploadContainer = document.querySelector('.upload-container');
+        const resultImage = document.getElementById('resultImage');
+        const recognizedFood = document.getElementById('recognizedFood');
+        const nutritionalInfo = document.getElementById('nutritionalInfo');
+        const backButton = document.getElementById('backButton');
+
+        // Show the upload form on page load
+        uploadContainer.style.display = 'flex';
+
+        uploadForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const fileInput = document.getElementById('foodImage');
+            const imageUrl = URL.createObjectURL(fileInput.files[0]); // Create a URL for the uploaded image
+
+            // Display the result
+            resultImage.src = imageUrl;
+            recognizedFood.textContent = "Example Food Item"; // Replace with actual recognized food
+            nutritionalInfo.textContent = "Calories: 250, Protein: 15g"; // Replace with actual nutritional info
+
+            // Switch to result container
+            uploadContainer.style.display = 'none';
+            resultContainer.style.display = 'block';
+        });
+
+        backButton.addEventListener('click', function() {
+            // Switch back to the upload container
+            resultContainer.style.display = 'none';
+            uploadContainer.style.display = 'flex';
+        });
+
+        // Preview the uploaded image
+        const fileInput = document.getElementById('foodImage');
+        fileInput.addEventListener('change', function() {
+            const imagePreview = document.getElementById('imagePreview');
+            const file = fileInput.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    imagePreview.src = event.target.result;
+                    imagePreview.style.display = 'block'; // Show the preview
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+        const contactUsHeader = document.getElementById('contactUsHeader');
+const contactEmail = document.getElementById('contactEmail');
+const contactPhone = document.getElementById('contactPhone');
+
+// Initially hide the contact information
+contactEmail.style.display = 'none';
+contactPhone.style.display = 'none';
+
+contactUsHeader.addEventListener('click', function() {
+    if (contactEmail.style.display === 'none' || contactEmail.style.display === '') {
+        contactEmail.style.display = 'block';
+        contactPhone.style.display = 'block';
+    } else {
+        contactEmail.style.display = 'none';
+        contactPhone.style.display = 'none';
+    }
+});
+
+    </script>
+</body>
+</html>
